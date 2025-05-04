@@ -1,44 +1,49 @@
 package com.example.weather.app;
 
-import com.example.weather.WeatherService;
+import java.util.ServiceLoader;
+import java.util.Scanner;
+import java.util.logging.Logger;
 import com.example.weather.WeatherProvider;
-
-import java.util.*;
+import com.example.weather.WeatherService;
 
 public class Main {
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("🌤️ Välkommen till Weather Wizard 🌤️");
-        System.out.print("Ange stad: ");
+        logger.info("=== Välkommen till Weather Wizard ===");
+        logger.info("Ange stad: ");
         String city = scanner.nextLine();
 
-        List<WeatherService> providers = new ArrayList<>();
-        ServiceLoader.load(WeatherService.class).forEach(providers::add);
+        var providers = ServiceLoader.load(WeatherService.class)
+                .stream()
+                .map(ServiceLoader.Provider::get)
+                .toList();
 
         if (providers.isEmpty()) {
-            System.out.println("Inga vädertjänster hittades!");
+            logger.warning("Inga vädertjänster hittades!");
             return;
         }
 
-        System.out.println("\nVälj vädertjänst:");
+        logger.info("\nVälj vädertjänst:");
         for (int i = 0; i < providers.size(); i++) {
-            WeatherService service = providers.get(i);
-            WeatherProvider annotation = service.getClass().getAnnotation(WeatherProvider.class);
+            var service = providers.get(i);
+            var annotation = service.getClass().getAnnotation(WeatherProvider.class);
             String name = annotation != null ? annotation.value() : service.getProviderName();
-            System.out.println((i + 1) + ". " + name);
+            logger.info((i + 1) + ". " + name);
         }
 
-        System.out.print("Ditt val: ");
+        logger.info("Ditt val: ");
         int choice = scanner.nextInt();
         scanner.nextLine();
 
         if (choice < 1 || choice > providers.size()) {
-            System.out.println("Ogiltigt val.");
+            logger.warning("Ogiltigt val.");
             return;
         }
 
-        WeatherService selected = providers.get(choice - 1);
-        System.out.println("\n" + selected.getForecast(city));
+        var selected = providers.get(choice - 1);
+        logger.info("\n" + selected.getForecast(city));
     }
 }
