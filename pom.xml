@@ -12,9 +12,6 @@
         <module>service</module>
         <module>serviceprovider</module>
         <module>serviceconsumer</module>
-        <module>service</module>
-        <module>serviceprovider</module>
-        <module>serviceconsumer</module>
     </modules>
 
     <properties>
