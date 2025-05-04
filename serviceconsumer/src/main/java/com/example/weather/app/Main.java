@@ -12,8 +12,8 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        logger.info("=== Välkommen till Weather Wizard ===");
-        logger.info("Ange stad: ");
+        logger.info("\uD83C\uDF24\uFE0F Välkommen till Weather Wizard \uD83C\uDF24\uFE0F");
+        logger.info("\nAnge stad: ");
         String city = scanner.nextLine();
 
         var providers = ServiceLoader.load(WeatherService.class)
