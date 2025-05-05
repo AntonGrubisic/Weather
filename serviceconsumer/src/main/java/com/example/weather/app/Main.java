@@ -12,38 +12,52 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        logger.info("\uD83C\uDF24\uFE0F Välkommen till Weather Wizard \uD83C\uDF24\uFE0F");
-        logger.info("\nAnge stad: ");
-        String city = scanner.nextLine();
+        while (true) {
+            logger.info("🌤️ Welcome to Weather Wizard 🌤️");
+            logger.info("\nEnter a city:");
+            String city = scanner.nextLine();
 
-        var providers = ServiceLoader.load(WeatherService.class)
-                .stream()
-                .map(ServiceLoader.Provider::get)
-                .toList();
+            var providers = ServiceLoader.load(WeatherService.class)
+                    .stream()
+                    .map(ServiceLoader.Provider::get)
+                    .toList();
 
-        if (providers.isEmpty()) {
-            logger.warning("Inga vädertjänster hittades!");
-            return;
+            if (providers.isEmpty()) {
+                logger.warning("No weather services found!");
+                return;
+            }
+
+            logger.info("\nChoose your weather service:");
+            for (int i = 0; i < providers.size(); i++) {
+                var service = providers.get(i);
+                var annotation = service.getClass().getAnnotation(WeatherProvider.class);
+                String name = annotation != null ? annotation.value() : service.getProviderName();
+                logger.info((i + 1) + ". " + name);
+            }
+
+            logger.info("Your choice: ");
+            int choice;
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                logger.warning("Invalid input.");
+                continue;
+            }
+
+            if (choice < 1 || choice > providers.size()) {
+                logger.warning("Invalid choice!");
+                continue;
+            }
+
+            var selected = providers.get(choice - 1);
+            logger.info("\n" + selected.getForecast(city));
+
+            logger.info("\nDo you want to check another city? (yes/no)");
+            String again = scanner.nextLine().trim().toLowerCase();
+            if (!again.equals("yes")) {
+                logger.info("Goodbye!");
+                break;
+            }
         }
-
-        logger.info("\nVälj vädertjänst:");
-        for (int i = 0; i < providers.size(); i++) {
-            var service = providers.get(i);
-            var annotation = service.getClass().getAnnotation(WeatherProvider.class);
-            String name = annotation != null ? annotation.value() : service.getProviderName();
-            logger.info((i + 1) + ". " + name);
-        }
-
-        logger.info("Ditt val: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-
-        if (choice < 1 || choice > providers.size()) {
-            logger.warning("Ogiltigt val.");
-            return;
-        }
-
-        var selected = providers.get(choice - 1);
-        logger.info("\n" + selected.getForecast(city));
     }
 }
