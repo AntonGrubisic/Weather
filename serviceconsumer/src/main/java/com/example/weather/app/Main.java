@@ -1,7 +1,6 @@
 package com.example.weather.app;
 
-import java.util.ServiceLoader;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Logger;
 import com.example.weather.WeatherProvider;
 import com.example.weather.WeatherService;
@@ -44,13 +43,8 @@ public class Main {
                 continue;
             }
 
-            if (choice < 1 || choice > providers.size()) {
-                logger.warning("Invalid choice!");
-                continue;
-            }
-
-            var selected = providers.get(choice - 1);
-            logger.info("\n" + selected.getForecast(city));
+            String forecast = getForecastForCity(city, choice, providers);
+            logger.info("\n" + forecast);
 
             logger.info("\nDo you want to check another city? (yes/no)");
             String again = scanner.nextLine().trim().toLowerCase();
@@ -59,5 +53,16 @@ public class Main {
                 break;
             }
         }
+    }
+
+    public static String getForecastForCity(String city, int choice, List<WeatherService> providers) {
+        if (providers.isEmpty()) {
+            return "No weather services found!";
+        }
+        if (choice < 1 || choice > providers.size()) {
+            return "Invalid choice!";
+        }
+        var selected = providers.get(choice - 1);
+        return selected.getForecast(city);
     }
 }
