@@ -7,6 +7,6 @@ import com.example.weather.WeatherProvider;
 public class SmhiWeatherService implements WeatherService {
     public String getProviderName() { return "SMHI"; }
     public String getForecast(String city) {
-        return "SMHI: Soligt i " + city + " idag!";
+        return "SMHI: Sunny in " + city + " today!";
     }
 }
