@@ -5,9 +5,20 @@ import java.util.logging.Logger;
 import com.example.weather.WeatherProvider;
 import com.example.weather.WeatherService;
 
+/**
+ * Main class for the Weather Wizard application.
+ * Runs a console-based weather app that lets the user select a city
+ * and choose a weather service provider dynamically.
+ */
 public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
+    /**
+     * Entry point for the Weather Wizard console app.
+     * Loops until the user decides to exit.
+     *
+     * @param args command-line arguments (not used)
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -55,6 +66,14 @@ public class Main {
         }
     }
 
+    /**
+     * Gets the weather forecast for a city from the selected provider.
+     *
+     * @param city      the city name
+     * @param choice    the selected provider index (1-based)
+     * @param providers the list of available weather providers
+     * @return the forecast string or error message
+     */
     public static String getForecastForCity(String city, int choice, List<WeatherService> providers) {
         if (providers.isEmpty()) {
             return "No weather services found!";
